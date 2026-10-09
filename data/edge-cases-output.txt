@@ -1,0 +1,66 @@
+ts=2026-10-08T08:50:28.840724839Z event=RECEIVED order=1 txnId=TXN-3002 requestId=REQ-B
+ts=2026-10-08T08:50:28.862586816Z event=PENDING_SEQUENCE txnId=TXN-3002 sequence=2 expected=1
+ts=2026-10-08T08:50:28.862860358Z event=RECEIVED order=2 txnId=TXN-3001 requestId=REQ-A
+ts=2026-10-08T08:50:28.867598133Z event=PROCESSING txnId=TXN-3001 requestId=REQ-A attempt=1 account=***301 type=CREDIT
+ts=2026-10-08T08:50:28.888000918Z event=PROCESSED txnId=TXN-3001 attempt=1 commit=APPLIED
+ts=2026-10-08T08:50:28.888499384Z event=PROCESSING txnId=TXN-3002 requestId=REQ-B attempt=1 account=***301 type=DEBIT
+ts=2026-10-08T08:50:28.888806983Z event=PROCESSED txnId=TXN-3002 attempt=1 commit=APPLIED
+ts=2026-10-08T08:50:28.889167062Z event=RECEIVED order=3 txnId=TXN-3003 requestId=REQ-C
+ts=2026-10-08T08:50:28.889765539Z event=PROCESSING txnId=TXN-3003 requestId=REQ-C attempt=1 account=***301 type=REVERSAL
+ts=2026-10-08T08:50:28.890062418Z event=PROCESSED txnId=TXN-3003 attempt=1 commit=APPLIED
+ts=2026-10-08T08:50:28.890438722Z event=RECEIVED order=4 txnId=TXN-3004 requestId=REQ-D
+ts=2026-10-08T08:50:28.891272865Z event=PROCESSING txnId=TXN-3004 requestId=REQ-D attempt=1 account=***301 type=DEBIT
+ts=2026-10-08T08:50:28.891494827Z event=FAILED txnId=TXN-3004 reason=INSUFFICIENT_FUNDS attempts=1
+ts=2026-10-08T08:50:28.891759129Z event=RECEIVED order=5 txnId=- requestId=-
+ts=2026-10-08T08:50:28.891930248Z event=REJECTED order=5 txnId=- reasons="malformed line: expected 8 columns"
+ts=2026-10-08T08:50:28.897828367Z event=RECEIVED order=6 txnId=TXN-3005 requestId=REQ-E
+ts=2026-10-08T08:50:28.898860606Z event=REJECTED order=6 txnId=TXN-3005 reasons="currency is not a valid ISO 4217 code"
+ts=2026-10-08T08:50:28.899107071Z event=RECEIVED order=7 txnId=TXN-3002 requestId=REQ-B2
+ts=2026-10-08T08:50:28.900216019Z event=REJECTED order=7 txnId=TXN-3002 reasons="conflicting payload for an already known transaction"
+ts=2026-10-08T08:50:28.900708804Z event=RECEIVED order=8 txnId=TXN-3006 requestId=REQ-F
+ts=2026-10-08T08:50:28.901127369Z event=PROCESSING txnId=TXN-3006 requestId=REQ-F attempt=1 account=***302 type=CREDIT
+ts=2026-10-08T08:50:28.901974256Z event=RETRY_SCHEDULED txnId=TXN-3006 failedAttempt=1 reason="simulated lost acknowledgement after commit"
+ts=2026-10-08T08:50:28.912529376Z event=PROCESSING txnId=TXN-3006 requestId=REQ-F attempt=2 account=***302 type=CREDIT
+ts=2026-10-08T08:50:28.913392018Z event=PROCESSED txnId=TXN-3006 attempt=2 commit=ALREADY_APPLIED
+ts=2026-10-08T08:50:28.915710356Z event=RECEIVED order=9 txnId=TXN-3008 requestId=REQ-H
+ts=2026-10-08T08:50:28.916277548Z event=PENDING_SEQUENCE txnId=TXN-3008 sequence=8 expected=7
+
+==================== TRANSACTION PROCESSING REPORT ====================
+Input records received : 9
+
+Summary by status
+  PENDING_SEQUENCE  : 1
+  PROCESSED         : 4
+  FAILED            : 1
+  REJECTED          : 3
+
+Retries scheduled     : 1
+Duplicates detected   : 0
+Ledger entries        : 4
+
+Per-record outcome
+  #   transactionId requestId      status            attempts detail
+  1   TXN-3002      REQ-B          PROCESSED         1        
+  2   TXN-3001      REQ-A          PROCESSED         1        
+  3   TXN-3003      REQ-C          PROCESSED         1        
+  4   TXN-3004      REQ-D          FAILED            1        INSUFFICIENT_FUNDS
+  5   -             -              REJECTED          0        malformed line: expected 8 columns
+  6   TXN-3005      REQ-E          REJECTED          0        currency is not a valid ISO 4217 code
+  7   TXN-3002      REQ-B2         REJECTED          0        conflicting payload for an already known transaction
+  8   TXN-3006      REQ-F          PROCESSED         2        effect was already applied by an earlier attempt; not applied again
+  9   TXN-3008      REQ-H          PENDING_SEQUENCE  0        waiting for earlier sequence numbers
+
+Lifecycle of transactions
+  TXN-3002: RECEIVED -> PENDING_SEQUENCE -> PROCESSING -> PROCESSED
+  TXN-3001: RECEIVED -> PROCESSING -> PROCESSED
+  TXN-3003: RECEIVED -> PROCESSING -> PROCESSED
+  TXN-3004: RECEIVED -> PROCESSING -> FAILED
+  TXN-3006: RECEIVED -> PROCESSING -> RETRY_PENDING -> PROCESSING -> PROCESSED
+
+Ordering
+  1 record(s) still waiting. Missing sequence numbers: [7]
+
+Balances
+  ***301 INR = 100.00
+  ***302 INR = 10.50
+=======================================================================
